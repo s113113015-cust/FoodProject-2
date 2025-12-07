@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>🚇 捷運紅線(南段)美食：從象山到圓山的美食之旅</title>
+    <style>
+        /* --- 基礎樣式 --- */
+        body {
+            font-family: '微軟正黑體', 'Arial', sans-serif;
+            padding: 0;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        
+        /* --- 頁面內容容器 --- */
+        #page-content {
+            max-width: 600px;
+            margin: 40px auto 50px auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+            border: 1px solid #ddd;
+        }
+
+        /* --- 標題與吉祥物區塊 --- */
+        #title-section {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #b71c1c;
+            padding-bottom: 15px;
+        }
+        /* 🚨 注意：請確保您在根目錄有一個名為 images 的資料夾，並在其中放置 mascot_white.png 圖片 */
+        #mascot-img {
+            width: 90px;
+            height: 90px;
+            margin-right: 15px;
+            border-radius: 8px;
+            object-fit: contain;
+            flex-shrink: 0;
+            padding: 5px;
+        }
+        
+        #main-title {
+            display: flex;
+            flex-direction: column; 
+            align-items: flex-start; 
+            flex-grow: 1;
+        }
+
+        #main-title h1 {
+            color: #8A0000;
+            font-size: 1.8em;
+            margin: 0;
+            font-weight: 900;
+            text-align: left; 
+            width: 100%;
+        }
+        
+        #main-title p {
+            color: #555;
+            margin: 5px 0 0 0;
+            font-size: 1.1em;
+            font-weight: bold;
+            line-height: 1.3;
+            text-align: left; 
+            width: 100%;
+        }
+        
+        /* --- 捷運線路圖容器 (站點列表) --- */
+        #metro-line-full {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 20px 15px;
+            margin-top: 15px;
+            background-color: #fcfcfc;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        
+        /* 站點連結區塊 */
+        .station-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #333;
+            text-decoration: none;
+            padding: 10px 0;
+            font-weight: bold;
+            font-size: 1.1em;
+            min-width: 100%;
+            transition: color 0.3s;
+        }
+        .station-link:hover { color: #e3002b; }
+        
+        /* 站點資訊容器 */
+        .station-info {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: flex-start;
+        }
+        
+        /* 站點代碼樣式 (R05) */
+        .station-code {
+            color: #e3002b;
+            font-weight: 900;
+            min-width: 45px;
+            text-align: left;
+            margin-left: 5px;
+            font-size: 0.9em;
+        }
+        
+        /* 站點名稱容器 */
+        .station-name {
+            display: flex;
+            flex-direction: column; 
+            color: #333;
+            flex-grow: 1;
+            min-width: 180px; 
+            text-align: left;
+            margin-left: 10px;
+            padding: 0;
+        }
+        
+        /* 中文站名 */
+        .chinese-name {
+            font-size: 1.1em;
+            font-weight: 900;
+            line-height: 1.4;
+        }
+        
+        /* 英文站名 */
+        .english-name {
+            font-size: 0.85em;
+            font-weight: normal;
+            color: #777;
+            line-height: 1.4;
+        }
+        
+        /* 站點圖標 */
+        .station-dot {
+            width: 14px;
+            height: 14px;
+            background-color: #e3002b;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #e3002b;
+            margin-right: 15px;
+            flex-shrink: 0;
+            z-index: 5;
+        }
+        
+        /* 連接線 */
+        .line-segment {
+            display: block;
+            width: 4px;
+            height: 60px;
+            background-color: #e3002b;
+            margin-left: 8px;
+            margin-top: -20px;
+            margin-bottom: -20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 美食圖標 */
+        /* 🚨 注意：請確保您在根目錄有一個名為 images 的資料夾，並在其中放置 food_icon.png 圖片 */
+        .food-icon {
+            width: 24px;
+            height: 24px;
+            background-image: url('./images/food_icon.png'); 
+            background-size: contain;
+            background-repeat: no-repeat;
+            margin-left: 10px;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="page-content">
+        
+        <div id="title-section">
+            <img id="mascot-img" src="./images/mascot_white.png" alt="吉祥物圖標">
+            <div id="main-title">
+                <h1>🚇 捷運紅線(南段)美食推薦</h1>
+                <p>    從象山到圓山的美食之旅</p>
+            </div>
+        </div>
+        
+        <p style="text-align: center; color: #8A0000; font-weight: bold; margin-bottom: 20px;">
+            點擊站點名稱，查看該站推薦美食：
+        </p>
+        
+        <div id="metro-line-full">
+            
+            <a href="./detail.html?station=xiangshan" class="station-link">
+                <span class="station-info">
+                    <span class="station-dot"></span>
+                    <span class="station-code">R02</span>
+                    <span class="station-name">
+                        <span class="chinese-name">象山站</span>
+                        <span class="english-name">Xiangshan Station</span>
+                    </span>
+                </span>
+                <span class="food-icon" title="有推薦美食"></span>
+            </a><span class="line-segment"></span>
+            
+            <a href="./detail.html?station=taipei101" class="station-link">
+                <span class="station-info">
+                    <span class="station-dot"></span>
+                    <span class="station-code">R03</span>
+                    <span class="station-name">
+                        <span class="chinese-name">台北101/世貿站</span>
+                        <span class="english-name">Taipei 101/World Trade Center</span>
+                    </span>
+                </span>
+                <span class="food-icon" title="有推薦美食"></span>
+            </a><span class="line-segment"></span>
+            
+            <a href="./detail.html?station=xinyianhe" class="station-link">
+                <span class="station-info">
+                    <span class="station-dot"></span>
+                    <span class="station-code">R04</span>
+                    <span class="station-name">
+                        <span class="chinese-name">信義安和站</span>
+                        <span class="english-name">Xinyi Anhe</span>
+                    </span>
+                </span>
+                <span class="food-icon" title="有推薦美食"></span>
+            </a><span class="line-segment"></span>
+
+            <a href="./detail.html?station=daan" class="station-link">
+                <span class="station-info">
+                    <span class="station-dot"></span>
+                    <span class="station-code">R05</span>
+                    <span class="station-name">
+                        <span class="chinese-name">大安站</span>
+                        <span class="english-name">Daan</span>
+                    </span>
+                </span>
+                <span class="food-icon" title="有推薦美食"></span>
+            </a><span class="line-segment"></span>
+
+            <a href="./detail.html?station=daanforestpark" class="station-link">
+                <span class="station-info">
+                    <span class="station-dot"></span>
+                    <span class="station-code">R06</span>
+                    <span class="station-name">
+                        <span class="chinese-name">大安森林公園站</span>
+                        <span class="english-name">Daan Forest Park</span>
+                    </span>
+                </span>
+                <span class="food-icon" title="有推薦美食"></span>
+            </a><span class="line-segment"></span>
+            
+            <a href="./detail.html?station=dongmen" class="station-link">
+                <span class="station-info">
+                    <span class="station-dot"></span>
+                    <span class="station-code">R07</span> 
+                    <span class="station-name">
+                        <span class="chinese-name">東門站</span>
+                        <span class="english-name">Dongmen</span>
+                    </span>
+                </span>
+                <span class="food-icon" title="有推薦美食"></span>
+            </a><span class="line-segment"></span>
+
+            <a href="./detail.html?station=cksmemorialhall" class="station-link">
+                <span class="station-info">
+                    <span class="station-dot"></span>
+                    <span class="station-code">R08</span> 
+                    <span class="station-name">
+                        <span class="chinese-name">中正紀念堂站</span>
+                        <span class="english-name">Chiang Kai-shek Memorial Hall</span>
+                    </span>
+                </span>
+                <span class="food-icon" title="有推薦美食"></span>
+            </a><span class="line-segment"></span>
+
+            <a href="./detail.html?station=ntuhospital" class="station-link">
+                <span class="station-info">
+                    <span class="station-dot"></span>
+                    <span class="station-code">R09</span> 
+                    <span class="station-name">
+                        <span class="chinese-name">台大醫院站</span>
+                        <span class="english-name">NTU Hospital</span>
+                    </span>
+                </span>
+                <span class="food-icon" title="有推薦美食"></span>
+            </a><span class="line-segment"></span>
+            
+            <a href="./detail.html?station=taipeimainstation" class="station-link">
+                <span class="station-info">
+                    <span class="station-dot"></span>
+                    <span class="station-code">R10</span> 
+                    <span class="station-name">
+                        <span class="chinese-name">台北車站</span>
+                        <span class="english-name">Taipei Main Station</span>
+                    </span>
+                </span>
+                <span class="food-icon" title="有推薦美食"></span>
+            </a>
+            
+            <span class="line-segment"></span>
+
+            <a href="./detail.html?station=zhongshan" class="station-link">
+                <span class="station-info">
+                    <span class="station-dot"></span>
+                    <span class="station-code">R11</span>
+                    <span class="station-name">
+                        <span class="chinese-name">中山站</span>
+                        <span class="english-name">Zhongshan</span>
+                    </span>
+                </span>
+                <span class="food-icon" title="有推薦美食"></span>
+            </a><span class="line-segment"></span>
+
+            <a href="./detail.html?station=shuanglian" class="station-link">
+                <span class="station-info">
+                    <span class="station-dot"></span>
+                    <span class="station-code">R12</span>
+                    <span class="station-name">
+                        <span class="chinese-name">雙連站</span>
+                        <span class="english-name">Shuanglian</span>
+                    </span>
+                </span>
+                <span class="food-icon" title="有推薦美食"></span>
+            </a><span class="line-segment"></span>
+
+            <a href="./detail.html?station=minquanwestroad" class="station-link">
+                <span class="station-info">
+                    <span class="station-dot"></span>
+                    <span class="station-code">R13</span>
+                    <span class="station-name">
+                        <span class="chinese-name">民權西路站</span>
+                        <span class="english-name">Minquan W. Rd.</span>
+                    </span>
+                </span>
+                <span class="food-icon" title="有推薦美食"></span>
+            </a><span class="line-segment"></span>
+
+            <a href="./detail.html?station=yuanshan" class="station-link">
+                <span class="station-info">
+                    <span class="station-dot"></span>
+                    <span class="station-code">R14</span>
+                    <span class="station-name">
+                        <span class="chinese-name">圓山站</span>
+                        <span class="english-name">Yuanshan</span>
+                    </span>
+                </span>
+                <span class="food-icon" title="有推薦美食"></span>
+            </a>
+            </div>
+        
+    </div>
+</body>
+</html>
