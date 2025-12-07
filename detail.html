@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美食詳細介紹</title>
+    <style>
+        /* 基礎樣式 */
+        body { font-family: '微軟正黑體', 'Arial', sans-serif; padding: 20px; background-color: #f4f4f4; }
+        h1 { color: #8A0000; text-align: center; margin-bottom: 30px; }
+        .food-item {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .food-item h2 {
+            color: #007BFF;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .back-link { display: block; text-align: center; margin-top: 20px; font-size: 16px; }
+
+        /* --- 推薦亮點區塊 (星星/描述) --- */
+        .highlight-section {
+            padding: 15px;
+            background-color: #fff9f9; 
+            border-left: 5px solid #E91E63; 
+            margin-top: 15px;
+            border-radius: 4px;
+        }
+        .highlight-title {
+            color: #E91E63; 
+            font-size: 1.1em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .highlight-title .stars {
+            color: gold; 
+            font-size: 1.2em;
+            margin-right: 8px;
+            letter-spacing: 2px; 
+        }
+        .highlight-description p {
+            margin: 0;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        /* --- 圖庫/地圖容器樣式 --- */
+        .photo-gallery {
+            display: flex;
+            gap: 10px; /* 元素之間的間隔 */
+            margin: 15px auto;
+            justify-content: space-between;
+        }
+        .photo-gallery > * {
+            flex: 1 1 50%; /* 確保圖庫和地圖/第二張圖片各佔 50% */
+            min-width: 0;
+        }
+
+        /* 圖片樣式 */
+        .photo-gallery img {
+            width: 100%;
+            height: 200px; 
+            border-radius: 6px;
+            object-fit: cover;
+            display: block;
+        }
+        /* 如果只有單一元素，讓它佔滿寬度 */
+        .photo-gallery.single-element > * {
+            flex: 1 1 100%;
+        }
+        .photo-gallery.single-element img {
+            height: 300px; 
+        }
+
+        /* 嵌入地圖樣式 */
+        .map-container {
+            position: relative;
+            width: 100%;
+            height: 200px; /* 與圖片保持一致的高度 */
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* 影片容器樣式 */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 比例 */
+            height: 0;
+            overflow: hidden;
+            margin-top: 20px;
+            background-color: black;
+            border-radius: 6px;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="station-title">美食介紹載入中...</h1>
+    
+    <div id="food-detail-container">
+    </div>
+    
+    <p class="back-link"><a href="index.html">← 返回站點列表</a></p>
+
+    <script>
+        // ==========================================================
+        // 🚨 核心資料區塊：請注意：
+        // 1. image_url_2 欄位已更名為 map_embed_url。
+        // 2. map_embed_url 內請填入 Google My Maps 的「嵌入地圖」連結。
+        // ==========================================================
+        const FOOD_DATA = {
+            // 象山站 (R02)
+            "xiangshan": {
+                "chinese_name": "象山站",
+                "foods": [
+                    {
+                        "id": 1,
+                        "name": "吳興街傳統早餐",
+                        "description": "提供古早味蛋餅與熱米漿，適合登山前補充體力。這家店的蛋餅皮酥內軟，米漿香濃，是附近居民的日常最愛。",
+                        "latitude": 25.03370,
+                        "longitude": 121.57140,
+                        "image_url": "images/xiangshan_1.jpg", 
+                        "map_embed_url": "YOUR_XIANGSHAN_MAP_EMBED_URL", // ⬅️ 請替換成您在 Google My Maps 建立的嵌入連結
+                        "video_url": "https://www.youtube.com/watch?v=0k3Pj85-l4s",
+                        "rating": "★★★☆☆"
+                    }
+                ]
+            },
+            // 台北101/世貿站 (R03)
+            "taipei101": {
+                "chinese_name": "台北101/世貿站",
+                "foods": [
+                    {
+                        "id": 1,
+                        "name": "初魚 鉄板料亭-台北信義A9",
+                        "description": "高檔食材如A5和牛，提供高CP值的日式無菜單鐵板燒體驗。",
+                        "latitude": 25.03667,
+                        "longitude": 121.5667,
+                        "image_url": "images/taipei101_1.jpg", 
+                        "map_embed_url": "https://www.google.com/maps/d/embed?mid=1N80m_0C3icRgqVQxdDIkcpDdu7vJuj0&ehbc=2E312F", // ⬅️ 請替換成您在 Google My Maps 建立的嵌入連結
+                        "video_url": "https://www.youtube.com/watch?v=Jm2755e37mY",
+                        "rating": "★★★★★"
+                    }
+                ]
+            },
+            // 信義安和站 (R04)
+            "xinyianhe": {
+                "chinese_name": "信義安和站",
+                "foods": [
+                    {
+                        "id": 1,
+                        "name": "御品元冰火湯圓",
+                        "description": "熱湯圓放冰上，淋上獨門桂花蜜，享受冰火交融的特色甜品。",
+                        "latitude": 25.03023,
+                        "longitude": 121.5554,
+                        "image_url": "images/xinyianhe_1.jpg", 
+                        "map_embed_url": "https://www.google.com/maps/d/embed?mid=1v-00CztsnpkoU66vkFT2_noerWGr8co&ehbc=2E312F", // ⬅️ 請替換成您在 Google My Maps 建立的嵌入連結
+                        "video_url": "https://www.youtube.com/watch?v=zJm8H_f_J1s",
+                        "rating": "★★★★☆"
+                    }
+                ]
+            },
+            // 大安站 (R05)
+            "daan": {
+                "chinese_name": "大安站",
+                "foods": [{
+                    "id": 1,
+                    "name": "貳樓餐廳 (大安店)",
+                    "description": "經典美式早午餐，份量大，適合聚餐。",
+                    "latitude": 25.03780,
+                    "longitude": 121.54350,
+                    "image_url": "images/daan_1.jpg",
+                    "map_embed_url": "YOUR_DAAN_MAP_EMBED_URL", // ⬅️ 請替換成您在 Google My Maps 建立的嵌入連結
+                    "video_url": "https://www.youtube.com/watch?v=y3n5N2R6_qg",
+                    "rating": "★★★★★"
+                }]
+            },
+            // 大安森林公園站 (R06)
+            "daanforestpark": {
+                "chinese_name": "大安森林公園站",
+                "foods": [{
+                    "id": 1,
+                    "name": "溫州大餛飩",
+                    "description": "公園旁的溫州大餛飩，皮薄餡多湯鮮美。",
+                    "latitude": 25.03050,
+                    "longitude": 121.53500,
+                    "image_url": "images/daanforestpark_1.jpg",
+                    "map_embed_url": "YOUR_DAANFORESTPARK_MAP_EMBED_URL", // ⬅️ 請替換成您在 Google My Maps 建立的嵌入連結
+                    "video_url": "https://www.youtube.com/watch?v=N6Yl-l3P9e4",
+                    "rating": "★★★★☆"
+                }]
+            },
+            // 東門站 (R07)
+            "dongmen": {
+                "chinese_name": "東門站",
+                "foods": [{
+                    "id": 1,
+                    "name": "東門赤肉羹",
+                    "description": "創立逾50年，以純手工的條狀赤肉羹搭配傳統濃郁湯頭聞名。",
+                    "latitude": 25.03535,
+                    "longitude": 121.52792,
+                    "image_url": "images/dongmen_1.jpg",
+                    "map_embed_url": "https://www.google.com/maps/d/embed?mid=1GWNOXKPZuBzyS5xiU2f6JdVEigDf-28&ehbc=2E312F", // ⬅️ 請替換成您在 Google My Maps 建立的嵌入連結
+                    "video_url": "https://www.youtube.com/watch?v=jWBKKGNBOKk",
+                    "rating": "★★★★★"
+                }]
+            },
+            // 中正紀念堂站 (R08)
+            "cksmemorialhall": {
+                "chinese_name": "中正紀念堂站",
+                "foods": [{
+                    "id": 1,
+                    "name": "金峰滷肉飯",
+                    "description": "營業時間長，肥而不膩的招牌滷肉飯。",
+                    "latitude": 25.03450,
+                    "longitude": 121.51650,
+                    "image_url": "images/cksmemorialhall_1.jpg",
+                    "map_embed_url": "YOUR_CKSMEMORIALHALL_MAP_EMBED_URL", // ⬅️ 請替換成您在 Google My Maps 建立的嵌入連結
+                    "video_url": "https://youtu.be/3DBMB5z6oMM",
+                    "rating": "★★★★☆"
+                }]
+            },
+            // 台大醫院站 (R09)
+            "ntuhospital": {
+                "chinese_name": "台大醫院站",
+                "foods": [{
+                    "id": 1,
+                    "name": "明星咖啡館",
+                    "description": "老字號的俄羅斯風格咖啡館，招牌俄羅斯軟糖。",
+                    "latitude": 25.04160,
+                    "longitude": 121.51780,
+                    "image_url": "images/ntuhospital_1.jpg",
+                    "map_embed_url": "YOUR_NTUHOSPITAL_MAP_EMBED_URL", // ⬅️ 請替換成您在 Google My Maps 建立的嵌入連結
+                    "video_url": "https://www.youtube.com/watch?v=Yf0R-b-x-r4",
+                    "rating": "★★★★☆"
+                }]
+            },
+            // 台北車站站 (R10)
+            "taipeimainstation": {
+                "chinese_name": "台北車站站",
+                "foods": [{
+                    "id": 1,
+                    "name": "後車站六洲麵線",
+                    "description": "曾獲必比登推介，以少見的大腸與小腸混合，搭配柴魚湯頭的清爽麵線。",
+                    "latitude": 25.04984,
+                    "longitude": 121.51457,
+                    "image_url": "images/taipeimainstation_1.jpg",
+                    "map_embed_url": "https://www.google.com/maps/d/embed?mid=1FR-acCuHSOuINWniZSSUiZmvQr_eKFk&ehbc=2E312F", // ⬅️ 請替換成您在 Google My Maps 建立的嵌入連結
+                    "video_url": "https://www.youtube.com/watch?v=P1p-t1c8t-k",
+                    "rating": "★★★☆☆"
+                }]
+            },
+            // 中山站 (R11)
+            "zhongshan": {
+                "chinese_name": "中山站",
+                "foods": [{
+                     "id": 1,
+                   "name": "米朗琪咖啡館",
+                   "description": "知名的鬆餅店，草莓奶油鬆餅是經典必點，常需要排隊。",
+                   "latitude": 25.05267,
+                   "longitude": 121.52187,
+                   "image_url": "images/zhongshan_1.jpg",
+                   "map_embed_url": "YOUR_ZHONGSHAN_MAP_EMBED_URL", 
+                   "video_url": "https://www.youtube.com/watch?v=gT8jL7e_O78",
+                   "rating": "★★★★☆"
+                }]
+            },
+            // 雙連站 (R12)
+            "shuanglian": {
+                "chinese_name": "雙連站",
+                 "foods": [{
+                   "id": 1,
+                 "name": "誠屋拉麵",
+                 "description": "源自日本大阪，主打以雞骨高湯為基礎的經典口味拉麵。。",
+                "latitude": 25.0573,
+                "longitude": 121.51886,
+                "image_url": "images/shuanglian_1.jpg",
+                "map_embed_url": "https://www.google.com/maps/d/embed?mid=1XpA8Em5shmgRLBUqIimqJs5MkHnfFVg&ehbc=2E312F", 
+                "video_url": "https://www.youtube.com/watch?v=5k9fC2p5E_Q",
+                "rating": "★★★★☆"
+                }]
+            },
+            // 民權西路站 (R13)
+            "minquanwestroad": {
+                "chinese_name": "民權西路站",
+                 "foods": [{
+                    "id": 1,
+                    "name": "晴光市場小吃群",
+                    "description": "充滿傳統風味的市場，有紅豆餅、麻油雞和丁香豆花等必吃美食。",
+                    "latitude": 25.06200,
+                    "longitude": 121.51800,
+                    "image_url": "images/minquanwestroad_1.jpg",
+                    "map_embed_url": "YOUR_MINQUANWESTROAD_MAP_EMBED_URL", 
+                    "video_url": "https://www.youtube.com/watch?v=kYv_zW4I7c4",
+                    "rating": "★★★☆☆"
+                }]
+            },
+            // 圓山站 (R14)
+            "yuanshan": {
+                "chinese_name": "圓山站",
+                "foods": [{
+                   "id": 1,
+                   "name": "花博公園市集美食",
+                   "description": "周邊常有假日市集和活動，可以找到各式特色攤位和餐車美食。",
+                   "latitude": 25.06940,
+                   "longitude": 121.52120,
+                   "image_url": "images/yuanshan_1.jpg",
+                   "map_embed_url": "YOUR_YUANSHAN_MAP_EMBED_URL", 
+                   "video_url": "https://www.youtube.com/watch?v=uK1l0Xw5uS0",
+                   "rating": "★★★☆☆"
+                }]
+            }
+        };
+
+        // --- 輔助函式：處理 YouTube 影片連結並轉換為嵌入碼 (已修正) ---
+        function getYoutubeEmbed(url) {
+            if (!url || url.trim() === "") return '';
+            
+            let videoId = '';
+            
+            // 1. 匹配標準觀看連結: https://www.youtube.com/watch?v=ID
+            const watchMatch = url.match(/[?&]v=([^&]+)/);
+            if (watchMatch && watchMatch[1]) {
+                videoId = watchMatch[1].substring(0, 11);
+            } 
+            
+            // 2. 匹配短連結: https://youtu.be/ID
+            if (!videoId) {
+                const shortMatch = url.match(/youtu\.be\/([^?&]+)/);
+                if (shortMatch && shortMatch[1]) {
+                    videoId = shortMatch[1].substring(0, 11);
+                }
+            }
+            
+            let embedUrl = '';
+            
+            if (videoId) {
+                embedUrl = `https://www.youtube.com/embed/${videoId}?controls=1&modestbranding=1`;
+            } else if (url.includes("youtube.com/embed/")) {
+                embedUrl = url;
+            } else {
+                return '<p style="color:#e3002b; font-weight:bold; margin-top:15px;">[影片連結格式錯誤]</p>';
+            }
+            
+            if (embedUrl) {
+                return `
+                    <h3 style="color:#555; margin-top: 30px;">🎬 美食影片介紹</h3>
+                    <div class="video-container">
+                        <iframe
+                            src="${embedUrl}"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                            title="美食影片介紹">
+                        </iframe>
+                    </div>
+                `;
+            }
+            return '';
+        }
+        
+        // --- 主要載入邏輯 (已修改地圖/圖片顯示) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const stationKey = urlParams.get('station');
+            const titleElement = document.getElementById('station-title');
+            const container = document.getElementById('food-detail-container');
+
+            if (!stationKey) {
+                titleElement.textContent = '❌ 錯誤：請從列表頁選擇站點。';
+            } else {
+                const stationData = FOOD_DATA[stationKey];
+
+                if (stationData && stationData.foods.length > 0) {
+                    titleElement.textContent = `🍜 ${stationData.chinese_name} 推薦美食`;
+                    
+                    const food = stationData.foods[0]; 
+                    const videoContent = getYoutubeEmbed(food.video_url);
+
+                    // --- 地圖與圖片邏輯 ---
+                    let photoGalleryHTML = '';
+                    const hasImage = food.image_url && food.image_url.trim() !== "";
+                    const hasMap = food.map_embed_url && food.map_embed_url.trim() !== "" && food.map_embed_url.startsWith("https://www.google.com/maps/d/embed");
+
+                    if (hasImage || hasMap) {
+                        photoGalleryHTML += `<h3 style="color:#555; margin-top: 30px;">🖼️ 資訊圖區</h3>`;
+                        
+                        let elements = '';
+                        let isSingle = false;
+
+                        if (hasImage && hasMap) {
+                            // 雙元素：圖片 + 地圖
+                            elements = `
+                                <div>
+                                    <img src="${food.image_url}" alt="${food.name} - 圖片" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x200?text=圖片未找到';">
+                                </div>
+                                <div class="map-container">
+                                    <iframe src="${food.map_embed_url}" allowfullscreen></iframe>
+                                </div>
+                            `;
+                        } else if (hasImage) {
+                            // 單元素：只有圖片
+                            elements = `
+                                <div>
+                                    <img src="${food.image_url}" alt="${food.name} - 圖片" onerror="this.onerror=null;this.src='https://via.placeholder.com/600x300?text=圖片未找到';">
+                                </div>
+                            `;
+                            isSingle = true;
+                        } else if (hasMap) {
+                            // 單元素：只有地圖
+                            elements = `
+                                <div class="map-container">
+                                    <iframe src="${food.map_embed_url}" allowfullscreen></iframe>
+                                </div>
+                            `;
+                            isSingle = true;
+                        }
+
+                        photoGalleryHTML += `
+                            <div class="photo-gallery ${isSingle ? 'single-element' : ''}">
+                                ${elements}
+                            </div>
+                        `;
+                    }
+                    // --- /地圖與圖片邏輯 ---
+                    
+                    const foodDiv = document.createElement('div');
+                    foodDiv.className = 'food-item';
+                    foodDiv.innerHTML = `
+                        <h2>${food.name}</h2>
+                        
+                        <div class="highlight-section">
+                            <div class="highlight-title">
+                                <span class="stars">${food.rating || 'N/A'}</span> 推薦亮點 (指數)
+                            </div>
+                            <div class="highlight-description">
+                                <p><strong>推薦理由：</strong> ${food.description}</p>
+                            </div>
+                        </div>
+
+                        ${photoGalleryHTML}
+                        
+                        ${videoContent}
+                        
+                        <p style="margin-top: 25px;"><strong>地圖座標：</strong> ${food.latitude}, ${food.longitude}</p>
+                    `;
+                    container.appendChild(foodDiv);
+                    
+                } else {
+                    titleElement.textContent = `⚠️ 找不到 ${stationKey} 站的推薦美食。`;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
